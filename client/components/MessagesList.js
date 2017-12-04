@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Message from './Message';
 import NewMessageEntry from './NewMessageEntry';
 import axios from 'axios';
-import store, { gotMessagesFromServer, fetchMessages } from '../store';
+import store, { gotMessagesFromServer, fetchMessages, deleteMessage } from '../store';
 
 export default class MessagesList extends Component {
 
@@ -28,6 +28,12 @@ export default class MessagesList extends Component {
     this.unsubcribe();
   }
 
+  handleClick (event) {
+    // console.log('event',event.target.value)
+    store.dispatch(deleteMessage(event.target.value));
+
+  }
+
   render () {
 
     const channelId = Number(this.props.match.params.channelId); // because it's a string "1", not a number!
@@ -37,7 +43,12 @@ export default class MessagesList extends Component {
     return (
       <div>
         <ul className="media-list">
-          { filteredMessages.map(message => <Message message={message} key={message.id} />) }
+          { filteredMessages.map(message =>
+            <div>
+            <Message message={message} key={message.id} />
+            <button value={message.id} key={'BUTTON'+ message.id} onClick={this.handleClick}>x</button>
+            </div>
+          ) }
         </ul>
         <NewMessageEntry channelId={channelId} />
       </div>
